@@ -7,7 +7,8 @@ import { useSignRound, type RoundResult } from '../engine/useSignRound'
 import { CameraView } from '../ui/CameraView'
 import { GameShell } from '../ui/GameShell'
 import { HandPictogram } from '../ui/HandPictogram'
-import { Meter, Readout } from '../ui/Meter'
+import { PracticeNotice } from '../ui/PracticeNotice'
+import { Meter } from '../ui/Meter'
 import { useDetector } from '../vision/useDetector'
 import { useCamera } from '../vision/useCamera'
 
@@ -82,25 +83,40 @@ function GuessRun({ onComplete }: { onComplete: (r: RoundResult) => void }) {
         <div>
           <div className="panel">
             <p className="eyebrow">Make this sign</p>
-            <p className="taskline">{word?.phrase ?? '—'}</p>
+            <p className={`taskline${word ? '' : ' waiting'}`}>
+              {word?.phrase ?? 'Getting ready…'}
+            </p>
             {word && (
-              <div className="handbox" style={{ marginTop: 14 }}>
-                <HandPictogram gesture={word.gesture} accent="var(--cyan)" />
+              <div className="handbox" style={{ marginTop: 16 }}>
+                <HandPictogram gesture={word.gesture} />
               </div>
             )}
 
-            <Meter label="Model's guess" value={guess} fraction={reading.rolling} good={reading.rolling >= GUESS_PASS} />
-            <Readout label="Hits" value={hits} flash={pulse > 0} key={pulse} />
-            <div className="meterrow">
-              <span>Time left</span>
-              <span className="val">{reading.remaining.toFixed(1)}s</span>
+            <Meter
+              label="Model's guess"
+              value={guess === '—' ? <span className="dim">waiting for a hand</span> : guess}
+              fraction={reading.rolling}
+              good={reading.rolling >= GUESS_PASS}
+            />
+
+            <div className="gamestats">
+              <div>
+                <p className="k">Time left</p>
+                <p className="v">{reading.remaining.toFixed(1)}s</p>
+              </div>
+              <div>
+                <p className="k">Hits</p>
+                <p className={`v${pulse > 0 ? ' hitflash' : ''}`} key={pulse}>
+                  {hits}
+                </p>
+              </div>
             </div>
 
-            <p className="readout">
-              {keysOnly
-                ? 'Practice mode: keys 1–6 stand in for a hand.'
-                : 'Any hand shape is read live — nothing is uploaded.'}
-            </p>
+            {keysOnly ? (
+              <PracticeNotice />
+            ) : (
+              <p className="readout">Any hand shape is read live — nothing is uploaded.</p>
+            )}
           </div>
         </div>
       </div>
@@ -121,10 +137,10 @@ function GuessResultView({ result, onAgain }: { result: RoundResult; onAgain: ()
         <p className="verdict">Signs recognised</p>
         <p className="howto">No gate here, no score to beat but your own.</p>
         <div className="btnrow" style={{ justifyContent: 'center' }}>
-          <button className="btn ghost" onClick={onAgain}>
+          <button className="btn btn-outline" onClick={onAgain}>
             Go again
           </button>
-          <Link className="btn" to="/">
+          <Link className="btn btn-primary" to="/learn">
             All games
           </Link>
         </div>

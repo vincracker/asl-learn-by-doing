@@ -31,7 +31,7 @@ async function createDetector(): Promise<Detector> {
     const recognizer = await createWith(fileset, 'GPU')
     return { recognizer, delegate: 'GPU', loadMs: performance.now() - started }
   } catch (gpuError) {
-    console.warn('[signport] GPU delegate unavailable, falling back to CPU:', gpuError)
+    console.warn('[handsup] GPU delegate unavailable, falling back to CPU:', gpuError)
     const recognizer = await createWith(fileset, 'CPU')
     return { recognizer, delegate: 'CPU', loadMs: performance.now() - started }
   }
@@ -57,7 +57,7 @@ async function createWith(
     return await GestureRecognizer.createFromOptions(fileset, options)
   } catch (err) {
     // Older builds reject the classifier-options key outright.
-    console.warn('[signport] classifier threshold rejected, using defaults:', err)
+    console.warn('[handsup] classifier threshold rejected, using defaults:', err)
     const { cannedGesturesClassifierOptions: _omit, ...fallback } = options
     return await GestureRecognizer.createFromOptions(fileset, fallback)
   }

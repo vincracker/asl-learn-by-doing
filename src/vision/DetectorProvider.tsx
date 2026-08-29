@@ -25,7 +25,7 @@ export function DetectorProvider({ children }: { children: ReactNode }) {
         })
       })
       .catch((err) => {
-        console.warn('[signport] detector failed:', err)
+        console.warn('[handsup] detector failed:', err)
         if (cancelled) return
         setState({
           status: 'error',

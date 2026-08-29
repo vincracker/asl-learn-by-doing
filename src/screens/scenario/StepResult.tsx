@@ -34,10 +34,10 @@ export function StepResult({
             : 'Try again with the hand closer to the camera, palm square on, and hold still for a full two seconds.'}
         </p>
         <div className="btnrow" style={{ justifyContent: 'center' }}>
-          <button className="btn ghost" onClick={onRetry}>
+          <button className="btn btn-outline" onClick={onRetry}>
             Retry this sign
           </button>
-          <button className="btn" onClick={onNext}>
+          <button className="btn btn-primary" onClick={onNext}>
             {isLast ? 'See your score' : 'Next line'}
           </button>
         </div>
