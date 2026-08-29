@@ -1,0 +1,239 @@
+:root {
+  --bg: #0b1120;
+  --panel: #131c31;
+  --panel-2: #1b2743;
+  --line: #27324f;
+  --text: #e8edf7;
+  --muted: #93a1bd;
+  --accent: #5eead4;
+  --accent-dim: #2dd4bf;
+  --warn: #fbbf24;
+  --bad: #fb7185;
+  --radius: 14px;
+  --font: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.2; letter-spacing: -0.02em; }
+p { margin: 0; line-height: 1.55; }
+button { font: inherit; color: inherit; cursor: pointer; }
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.topbar__brand { display: flex; align-items: baseline; gap: 10px; }
+.topbar__brand strong { font-size: 20px; }
+.topbar__brand span { color: var(--muted); font-size: 13px; }
+
+.nav { display: flex; gap: 8px; }
+
+.nav a {
+  padding: 8px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+.nav a:hover { color: var(--text); background: var(--panel); }
+.nav a.is-active { color: var(--bg); background: var(--accent); font-weight: 600; }
+
+/* --- camera stage ------------------------------------------------------- */
+
+.stage {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  background: #060a14;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 2px solid var(--line);
+  transition: border-color 140ms ease;
+}
+.stage--armed { border-color: var(--warn); }
+.stage--capturing { border-color: var(--accent); }
+
+/* Mirrored so signing feels natural; detection uses the unmirrored frame. */
+.stage__video,
+.overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+}
+.stage__video { object-fit: cover; }
+.overlay { pointer-events: none; }
+
+.stage__hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+
+.stage__content {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: linear-gradient(to top, rgba(6, 10, 20, 0.92), transparent);
+  z-index: 2;
+}
+
+.stage__veil {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 32px;
+  background: rgba(6, 10, 20, 0.88);
+  z-index: 3;
+}
+.stage__veil p { color: var(--muted); max-width: 42ch; font-size: 14px; }
+
+.pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(19, 28, 49, 0.85);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.pill--live { background: var(--accent); color: #06121a; border-color: var(--accent); }
+.stage--armed .pill--live { background: var(--warn); border-color: var(--warn); }
+.pill--muted { opacity: 0.8; }
+
+/* --- generic surfaces --------------------------------------------------- */
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 14px;
+}
+
+.btn {
+  padding: 11px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+.btn:hover:not(:disabled) { background: #24345a; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn--primary { background: var(--accent); color: #06121a; border-color: var(--accent); }
+.btn--primary:hover:not(:disabled) { background: var(--accent-dim); }
+.btn--ghost { background: transparent; }
+.btn--hold { user-select: none; touch-action: none; }
+
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.muted { color: var(--muted); font-size: 13px; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 880px) { .layout { grid-template-columns: 1fr; } }
+
+/* --- score meter -------------------------------------------------------- */
+
+.meter { height: 8px; border-radius: 999px; background: var(--panel-2); overflow: hidden; }
+.meter__fill { height: 100%; border-radius: 999px; transition: width 260ms ease; }
+
+.verdict { font-size: 15px; font-weight: 600; }
+.verdict--pass { color: var(--accent); }
+.verdict--fail { color: var(--warn); }
+
+.disclaimer {
+  font-size: 12px;
+  color: var(--muted);
+  border-left: 2px solid var(--line);
+  padding-left: 12px;
+  line-height: 1.5;
+}
+
+.sign-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  text-decoration: none;
+  color: inherit;
+}
+.sign-card:hover { border-color: var(--accent); }
+.sign-card__gloss { font-size: 17px; font-weight: 700; letter-spacing: 0.01em; }
+.sign-card__how { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+.badge {
+  align-self: flex-start;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.badge--ready { background: rgba(94, 234, 212, 0.15); color: var(--accent); }
+.badge--missing { background: rgba(251, 191, 36, 0.15); color: var(--warn); }
+
+.clip { width: 100%; border-radius: 10px; background: #060a14; aspect-ratio: 4 / 3; object-fit: cover; }
+
+.beat { display: flex; flex-direction: column; gap: 6px; }
+.beat__speaker { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); font-weight: 700; }
+.beat__text { font-size: 16px; }
+
+.progress-dots { display: flex; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 999px; background: var(--panel-2); }
+.dot--done { background: var(--accent); }
+.dot--current { background: var(--text); }
