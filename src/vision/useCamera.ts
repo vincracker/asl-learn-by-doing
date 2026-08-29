@@ -32,13 +32,22 @@ export function useCamera(): CameraState {
 
     async function start() {
       try {
-        stream = await navigator.mediaDevices.getUserMedia(CONSTRAINTS)
-        if (cancelled) return
+        const media = await navigator.mediaDevices.getUserMedia(CONSTRAINTS)
+
+        // Unmounting while the permission prompt is still open runs the cleanup below
+        // before `stream` has been assigned, so it finds null and stops nothing. The
+        // track that arrives afterwards is then unreachable and the camera light stays
+        // on until a reload — stopping it here is the only chance left.
+        if (cancelled) {
+          media.getTracks().forEach((track) => track.stop())
+          return
+        }
+        stream = media
 
         const video = videoRef.current
         if (!video) throw new Error('video element not mounted')
 
-        video.srcObject = stream
+        video.srcObject = media
         await video.play()
         if (cancelled) return
         setStatus('ready')

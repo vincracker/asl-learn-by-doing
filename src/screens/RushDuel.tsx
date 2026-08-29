@@ -26,7 +26,7 @@ const TITLE = { title: 'Rush hour', sub: 'head to head' }
 const pickWord = (previous: Word) => pickNextWord(WORD_BANK, previous)
 
 /** Before the one Go press, then the automatic loop: announce, sign, announce, sign. */
-type Phase = 'start' | 'handoff' | 'signing'
+type Phase = 'arming' | 'handoff' | 'signing'
 
 /**
  * Two players, one camera, one continuous minute.
@@ -36,19 +36,60 @@ type Phase = 'start' | 'handoff' | 'signing'
  * permission and put a black frame in front of whoever went second.
  */
 export function RushDuel() {
+  const [started, setStarted] = useState(false)
+  const [completed, setCompleted] = useState<Match | null>(null)
+
+  if (completed) {
+    return (
+      <GameShell {...TITLE}>
+        <DuelResult
+          match={completed}
+          onAgain={() => {
+            setCompleted(null)
+            // Back to the Go screen, not straight into another match. The device has
+            // to physically change hands here, and the 1.5 s handoff beat is not
+            // enough warning for that on its own.
+            setStarted(false)
+          }}
+        />
+      </GameShell>
+    )
+  }
+
+  if (!started) {
+    return (
+      <GameShell {...TITLE}>
+        <div className="duelintro">
+          <DuelStart onGo={() => setStarted(true)} />
+        </div>
+      </GameShell>
+    )
+  }
+
+  // Unmounted on both exits above, so every match starts from a fresh camera and a
+  // fresh Match without needing a key to force it.
+  return <DuelMatch onComplete={setCompleted} />
+}
+
+/** Mounted only after Go, so owning this component is equivalent to camera consent. */
+function DuelMatch({ onComplete }: { onComplete: (match: Match) => void }) {
   const { detector, status: modelStatus } = useDetector()
   const { videoRef, status: cameraStatus } = useCamera()
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   const [match, setMatch] = useState<Match>(() => startMatch(pickNextWord(WORD_BANK, null)))
-  const [phase, setPhase] = useState<Phase>('start')
+  const [phase, setPhase] = useState<Phase>('arming')
   const [last, setLast] = useState<LastTurn | null>(null)
 
   const keysOnly = modelStatus !== 'ready' || cameraStatus === 'denied' || cameraStatus === 'error'
-  const started = phase !== 'start'
-  const over = match.outcome !== null
+  const ready = modelStatus !== 'loading' && cameraStatus !== 'starting'
+  // Readiness reveals the first handoff without a synchronous setState effect. Later
+  // handoffs are explicit state transitions after each completed turn.
+  const visiblePhase: Phase = phase === 'arming' && ready ? 'handoff' : phase
 
-  const clock = useCountdown(DUEL_MATCH_SECONDS, started)
+  // Permission and model setup do not consume match time. The minute begins only once
+  // the real camera or the keyboard fallback is ready to play.
+  const clock = useCountdown(DUEL_MATCH_SECONDS, visiblePhase !== 'arming')
 
   // The turn loop hands results back from a rAF callback, so it reads the match through
   // a ref. Advancing inside a setState updater instead would apply the turn twice under
@@ -62,26 +103,29 @@ export function RushDuel() {
     (result: TurnResult) => {
       const current = matchRef.current
       setLast({ player: current.turn, result })
-      setMatch(
-        applyTurn(current, result, {
-          pickWord,
-          // Read the deadline, not the displayed clock: this decides the match, and the
-          // display can be up to a tick behind.
-          timeRemains: clock.deadline.current - performance.now() > 0,
-        }),
-      )
-      setPhase('handoff')
+      const next = applyTurn(current, result, {
+        pickWord,
+        // Read the deadline, not the displayed clock: this decides the match, and the
+        // display can be up to a tick behind.
+        timeRemains: clock.deadline.current - performance.now() > 0,
+      })
+      setMatch(next)
+
+      // Hand the result to the wrapper so this camera-owning component unmounts and
+      // releases the MediaStream before the result screen is shown.
+      if (next.outcome) onComplete(next)
+      else setPhase('handoff')
     },
-    [clock.deadline],
+    [clock.deadline, onComplete],
   )
 
   // The handoff runs itself out and starts the next turn. This is the whole reason
   // there is no button here.
   useEffect(() => {
-    if (phase !== 'handoff' || over) return
+    if (visiblePhase !== 'handoff') return
     const id = setTimeout(() => setPhase('signing'), DUEL_HANDOFF_MS)
     return () => clearTimeout(id)
-  }, [phase, over, match.round, match.turn])
+  }, [visiblePhase, match.round, match.turn])
 
   const reading = useDuelTurn({
     videoRef,
@@ -95,23 +139,9 @@ export function RushDuel() {
     // the same phrase can come round again a few turns later. The round and player
     // make the turn identity explicit.
     turnId: `${match.round}-${match.turn}`,
-    enabled: phase === 'signing' && !over && modelStatus !== 'loading' && cameraStatus !== 'starting',
+    enabled: visiblePhase === 'signing' && ready,
     onResult,
   })
-
-  const restart = () => {
-    setMatch(startMatch(pickNextWord(WORD_BANK, null)))
-    setLast(null)
-    setPhase('start')
-  }
-
-  if (over) {
-    return (
-      <GameShell {...TITLE}>
-        <DuelResult match={match} onAgain={restart} />
-      </GameShell>
-    )
-  }
 
   return (
     <GameShell {...TITLE}>
@@ -122,27 +152,38 @@ export function RushDuel() {
             canvasRef={canvasRef}
             status={cameraStatus}
             badge={
-              phase === 'signing'
+              visiblePhase === 'signing'
                 ? `${playerName(match.turn).toUpperCase()} — GO`
-                : `${DUEL_MATCH_SECONDS} SECONDS, TWO PLAYERS`
+                : visiblePhase === 'arming'
+                  ? 'SETTING UP CAMERA'
+                  : `${DUEL_MATCH_SECONDS} SECONDS, TWO PLAYERS`
             }
             keysOnly={keysOnly}
           />
           <DuelScoreboard
             match={match}
-            active={started ? match.turn : null}
-            remaining={started ? clock.remaining : DUEL_MATCH_SECONDS}
+            active={visiblePhase === 'arming' ? null : match.turn}
+            remaining={visiblePhase === 'arming' ? DUEL_MATCH_SECONDS : clock.remaining}
           />
         </div>
 
         <div>
-          {phase === 'start' && <DuelStart onGo={() => setPhase('handoff')} />}
+          {visiblePhase === 'arming' && (
+            <div className="panel duelhandoff">
+              <p className="eyebrow">Getting the game ready</p>
+              <p className="taskline">Camera setup</p>
+              <p className="howto">
+                Allow camera access when prompted. The {DUEL_MATCH_SECONDS}-second clock
+                will not start until the camera or practice mode is ready.
+              </p>
+            </div>
+          )}
 
-          {phase === 'handoff' && (
+          {visiblePhase === 'handoff' && (
             <DuelHandoff player={match.turn} round={match.round} last={last} />
           )}
 
-          {phase === 'signing' && (
+          {visiblePhase === 'signing' && (
             <div className="panel">
               <p className="eyebrow">
                 {playerName(match.turn)} · round {match.round}

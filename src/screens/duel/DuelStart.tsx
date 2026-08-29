@@ -10,6 +10,10 @@ export function DuelStart({ onGo }: { onGo: () => void }) {
     <div className="panel duelhandoff">
       <p className="eyebrow">Two players, one camera</p>
       <p className="taskline">{DUEL_MATCH_SECONDS} seconds</p>
+      <p className="howto">
+        Your camera stays off on this screen. Press Go when both players are ready;
+        the match clock waits for camera access before it begins.
+      </p>
       <ul className="duelrules">
         <li>You take turns automatically — press Go once and don't touch it again.</li>
         <li>
