@@ -1,4 +1,4 @@
-# SIGNPORT — learn signs, scenario by scenario
+# HandsUp — learn signs, scenario by scenario
 
 A browser game for learning simple hand signs, played in the places you'd actually need
 them: an airport check-in desk, a bus door. Your webcam watches your hand and scores how

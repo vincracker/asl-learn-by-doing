@@ -1,162 +1,118 @@
-import { BONUS } from '../content/bonus'
-import { PASS } from '../content/rules'
-import { ORDER, SCENARIOS, SCENARIO_LIST, SOON, type Scenario } from '../content/scenarios'
+import { Link } from 'react-router-dom'
+import { SCENARIO_LIST } from '../content/scenarios'
 import { useProgress } from '../progress/useProgress'
-import { LinkCard, LockedCard, Tag } from '../ui/Cards'
-import { SplitFlap } from '../ui/SplitFlap'
-import { useDetector } from '../vision/useDetector'
+import { Footer } from '../ui/Footer'
+import { TopBar } from '../ui/TopBar'
 
 export function Home() {
   return (
-    <section>
+    <div className="home">
+      <TopBar />
       <Hero />
-
-      <Rail title="Scenarios" hint="Scroll sideways →">
-        {SCENARIO_LIST.map((s) => (
-          <ScenarioCard key={s.id} scenario={s} />
-        ))}
-        {SOON.map((s) => (
-          <LockedCard
-            key={s.name}
-            art="soon"
-            tag={<Tag kind="locked">In development</Tag>}
-            name={s.name}
-            desc={s.tagline}
-            chips={['3 signs']}
-          />
-        ))}
-      </Rail>
-
-      <Rail title="Bonus games" hint="No scenario, no gate">
-        {BONUS.map((b) =>
-          b.path ? (
-            <LinkCard
-              key={b.id}
-              to={b.path}
-              art={b.art}
-              tag={<Tag kind="open">Always open</Tag>}
-              name={b.name}
-              desc={b.blurb}
-              chips={b.chips}
-            />
-          ) : (
-            <LockedCard
-              key={b.id}
-              art={b.art}
-              tag={<Tag kind="locked">Coming soon</Tag>}
-              name={b.name}
-              desc={b.blurb}
-              chips={b.chips}
-            />
-          ),
-        )}
-      </Rail>
-
-      <Notes />
-    </section>
+      <LearnCard />
+      <Footer />
+    </div>
   )
 }
 
 function Hero() {
-  const { status, message } = useDetector()
-  const dotClass = status === 'ready' ? 'dot live' : status === 'error' ? 'dot off' : 'dot'
+  const { isUnlocked } = useProgress()
+  // The CTA and the caption both point at wherever the player actually is.
+  const next = SCENARIO_LIST.find((s) => isUnlocked(s.id)) ?? SCENARIO_LIST[0]
 
   return (
-    <header className="hero">
-      <p className="eyebrow">Two-way, not one-way</p>
-      <SplitFlap word="SIGNPORT" />
-      <p className="lede">
-        Deaf people learn our languages every day. <b>This flips it.</b> Three signs per scenario,
-        played in the places you actually need them — a check-in desk, a bus door. No account, no
-        download, just your camera.
-      </p>
-
-      <div className="statusbar" role="status">
-        <span className={dotClass} />
-        <span>{message}</span>
-        <span className="dim" style={{ marginLeft: 'auto' }}>
-          Video never leaves your device
-        </span>
+    <section className="hero2">
+      <div>
+        <h1 className="bigline">
+          Learn to Sign
+          <br />
+          <span className="hl">by Playing.</span>
+        </h1>
+        <p className="lede">
+          Master essential hand shapes and everyday signs through interactive, scenario-based
+          challenges.
+        </p>
+        <Link className="btn btn-primary" to={`/scenario/${next.id}`}>
+          Let's Play
+        </Link>
       </div>
-    </header>
+
+      <div>
+        <img
+          className="heroshot"
+          src="/signing.jpg"
+          width={1400}
+          height={933}
+          alt="A woman and a young girl signing to each other across a table"
+        />
+      </div>
+    </section>
   )
 }
 
-function Rail({
-  title,
-  hint,
-  children,
-}: {
-  title: string
-  hint: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="rail">
-      <div className="rail-head">
-        <h2>{title}</h2>
-        <span className="hint">{hint}</span>
-      </div>
-      <div className="track">{children}</div>
-    </div>
-  )
-}
-
-function ScenarioCard({ scenario }: { scenario: Scenario }) {
-  const { getScore, isUnlocked } = useProgress()
-  const score = getScore(scenario.id)
-  const unlocked = isUnlocked(scenario.id)
-  const done = score !== null && score >= PASS
-
-  const body = {
-    art: scenario.id,
-    name: scenario.name,
-    desc: scenario.blurb,
-    chips: scenario.words,
-    extra: score !== null ? <p className="scoreline">Best {Math.round(score * 100)}%</p> : undefined,
-  } as const
-
-  if (!unlocked) {
-    const previous = SCENARIOS[ORDER[ORDER.indexOf(scenario.id) - 1]]
-    return (
-      <LockedCard
-        {...body}
-        tag={<Tag kind="locked">Locked · need {Math.round(PASS * 100)}% in {previous.name}</Tag>}
-      />
-    )
-  }
+/** One door into everything: the scenarios and the games both live behind it. */
+function LearnCard() {
+  const { isUnlocked } = useProgress()
+  const open = SCENARIO_LIST.filter((scenario) => isUnlocked(scenario.id)).length
+  const progress = Math.round((open / SCENARIO_LIST.length) * 100)
+  const action = open > 1 ? 'Continue learning' : 'Start learning'
 
   return (
-    <LinkCard
-      {...body}
-      to={`/scenario/${scenario.id}`}
-      tag={<Tag kind={done ? 'done' : 'open'}>{done ? 'Cleared' : 'Open'}</Tag>}
-    />
-  )
-}
+    <section className="catsection" aria-labelledby="learn-heading">
+      <Link className="bigcat" to="/learn" aria-labelledby="learn-heading">
+        <div className="art">
+          <img
+            src="/learn-signing.png"
+            width={1740}
+            height={1160}
+            alt="A woman and a child signing together at a playground"
+          />
+        </div>
+        <div className="body">
+          <p className="eyebrow">Start here</p>
+          <h2 id="learn-heading">Learn by doing</h2>
+          <p className="blurb">
+            Build six essential hand shapes through quick scenarios and games, then practise them
+            in the places you'd actually use them.
+          </p>
 
-function Notes() {
-  return (
-    <div className="notes">
-      <div className="note">
-        <b>How the gate works</b>Score {Math.round(PASS * 100)}% or higher and the next scenario
-        opens. Below that, replay — repetition is the point, not the punishment.
-      </div>
-      <div className="note">
-        <b>What's under the hood</b>Google MediaPipe{' '}
-        <a href="https://github.com/google-ai-edge/mediapipe" target="_blank" rel="noopener noreferrer">
-          Gesture Recognizer
-        </a>
-        , a pretrained model that runs entirely in your browser. Frames are read and discarded.
-      </div>
-      <div className="note">
-        <b>Honest limitation</b>These are simplified single-hand signs, not full ASL or Auslan —
-        real signs use two hands, movement and face. Treat this as a first door, not a dictionary.
-      </div>
-      <div className="note">
-        <b>Progress</b>Kept in this tab only, so nothing about you is stored. Refresh and you start
-        clean.
-      </div>
-    </div>
+          <ul className="learnstats" aria-label="Learning content">
+            <li>
+              <strong>{SCENARIO_LIST.length}</strong>
+              <span>Scenarios</span>
+            </li>
+            <li>
+              <strong>2</strong>
+              <span>Games</span>
+            </li>
+            <li>
+              <strong>6</strong>
+              <span>Hand shapes</span>
+            </li>
+          </ul>
+
+          <div className="learnprogress">
+            <div className="progresscopy">
+              <span>Scenario access</span>
+              <strong>
+                {open} of {SCENARIO_LIST.length} unlocked
+              </strong>
+            </div>
+            <div
+              className="progressbar"
+              role="progressbar"
+              aria-label="Scenarios unlocked"
+              aria-valuemin={0}
+              aria-valuemax={SCENARIO_LIST.length}
+              aria-valuenow={open}
+            >
+              <span style={{ width: `${progress}%` }} />
+            </div>
+          </div>
+
+          <span className="learncta">{action}</span>
+        </div>
+      </Link>
+    </section>
   )
 }

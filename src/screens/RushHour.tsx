@@ -7,8 +7,9 @@ import { useProgress } from '../progress/useProgress'
 import { CameraView } from '../ui/CameraView'
 import { GameShell } from '../ui/GameShell'
 import { HandPictogram } from '../ui/HandPictogram'
-import { Meter, Readout } from '../ui/Meter'
+import { Meter } from '../ui/Meter'
 import { ModelReadout } from '../ui/ModelReadout'
+import { PracticeNotice } from '../ui/PracticeNotice'
 import { useDetector } from '../vision/useDetector'
 import { useCamera } from '../vision/useCamera'
 
@@ -115,7 +116,9 @@ function RushRun({ onComplete }: { onComplete: (r: RoundResult) => void }) {
         <div>
           <div className="panel">
             <p className="eyebrow">Sign this phrase</p>
-            <p className="taskline">{word ? `“${word.phrase}”` : '—'}</p>
+            <p className={`taskline${word ? '' : ' waiting'}`}>
+              {word ? `“${word.phrase}”` : 'Getting ready…'}
+            </p>
 
             {revealed && word && (
               <div className="teach" style={{ marginTop: 14 }}>
@@ -134,29 +137,35 @@ function RushRun({ onComplete }: { onComplete: (r: RoundResult) => void }) {
               fraction={reading.rolling}
               good={reading.rolling >= RUSH_PASS}
             />
-            <Meter
-              label="Time left"
-              value={`${reading.remaining.toFixed(1)}s`}
-              fraction={1 - reading.remaining / RUSH_SECONDS}
-              dim
-            />
-            <Readout label="Cleared" value={hits} flash={pulse > 0} key={pulse} />
+
+            <div className="gamestats">
+              <div>
+                <p className="k">Time left</p>
+                <p className="v">{reading.remaining.toFixed(1)}s</p>
+              </div>
+              <div>
+                <p className="k">Cleared</p>
+                <p className={`v${pulse > 0 ? ' hitflash' : ''}`} key={pulse}>
+                  {hits}
+                </p>
+              </div>
+            </div>
 
             <div className="btnrow">
               <button
-                className="btn ghost"
+                className="btn btn-outline"
                 onClick={() => setRevealedFor(word?.phrase ?? null)}
                 disabled={revealed || !word}
               >
                 Show the sign
               </button>
-              <button className="btn ghost" onClick={skip}>
+              <button className="btn btn-outline" onClick={skip}>
                 Skip →
               </button>
             </div>
 
             {keysOnly ? (
-              <p className="readout">Practice mode: keys 1–6 stand in for a hand.</p>
+              <PracticeNotice />
             ) : (
               <ModelReadout label={reading.label} mScore={reading.mScore} gScore={reading.gScore} />
             )}
@@ -194,10 +203,10 @@ function RushResultView({ outcome, onAgain }: { outcome: Outcome; onAgain: () =>
           score to beat is your own.
         </p>
         <div className="btnrow" style={{ justifyContent: 'center' }}>
-          <button className="btn" onClick={onAgain}>
+          <button className="btn btn-primary" onClick={onAgain}>
             Go again
           </button>
-          <Link className="btn ghost" to="/">
+          <Link className="btn btn-outline" to="/learn">
             All games
           </Link>
         </div>

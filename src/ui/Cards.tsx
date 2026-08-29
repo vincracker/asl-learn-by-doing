@@ -43,7 +43,7 @@ function CardBody({ art, tag, name, desc, chips, extra }: Body) {
 /** A card that goes somewhere. */
 export function LinkCard({ to, ...body }: Body & { to: string }) {
   return (
-    <Link className="card" to={to}>
+    <Link className="tile" to={to}>
       <CardBody {...body} />
     </Link>
   )
@@ -52,7 +52,7 @@ export function LinkCard({ to, ...body }: Body & { to: string }) {
 /** A card that doesn't — locked scenarios and games still in development. */
 export function LockedCard(body: Body) {
   return (
-    <div className="card locked" aria-disabled="true">
+    <div className="tile locked" aria-disabled="true">
       <CardBody {...body} />
     </div>
   )

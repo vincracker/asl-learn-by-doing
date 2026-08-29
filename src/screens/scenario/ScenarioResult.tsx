@@ -61,15 +61,15 @@ export function ScenarioResult({
       </p>
 
       <div className="btnrow" style={{ justifyContent: 'center' }}>
-        <button className="btn ghost" onClick={onReplay}>
+        <button className="btn btn-outline" onClick={onReplay}>
           Play again
         </button>
         {ok && nextId ? (
-          <Link className="btn" to={`/scenario/${nextId}`}>
+          <Link className="btn btn-primary" to={`/scenario/${nextId}`}>
             Start {SCENARIOS[nextId].name}
           </Link>
         ) : (
-          <Link className="btn" to="/">
+          <Link className="btn btn-primary" to="/learn">
             All games
           </Link>
         )}
