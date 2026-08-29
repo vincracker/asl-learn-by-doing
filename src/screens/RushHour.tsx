@@ -23,6 +23,7 @@ type Outcome = { round: RoundResult; previousBest: number; previousRuns: number 
 
 export function RushHour() {
   const { rushBest, rushRuns, recordRush } = useProgress()
+  const [started, setStarted] = useState(false)
   const [outcome, setOutcome] = useState<Outcome | null>(null)
   const [runId, setRunId] = useState(0)
 
@@ -47,7 +48,31 @@ export function RushHour() {
       />
     )
   }
+
+  if (!started) return <RushStart onStart={() => setStarted(true)} />
+
   return <RushRun key={runId} onComplete={handleComplete} />
+}
+
+/** The camera-owning round is not mounted until this explicit user action. */
+function RushStart({ onStart }: { onStart: () => void }) {
+  return (
+    <GameShell {...TITLE}>
+      <div className="result">
+        <p className="eyebrow">Ready when you are</p>
+        <p className="taskline">{RUSH_SECONDS} seconds</p>
+        <p className="howto">
+          Recall as many phrases as you can. Your camera stays off until you start, then
+          the first phrase appears as soon as camera access is ready.
+        </p>
+        <div className="btnrow" style={{ justifyContent: 'center' }}>
+          <button className="btn" onClick={onStart} autoFocus>
+            Start Rush hour
+          </button>
+        </div>
+      </div>
+    </GameShell>
+  )
 }
 
 function RushRun({ onComplete }: { onComplete: (r: RoundResult) => void }) {
