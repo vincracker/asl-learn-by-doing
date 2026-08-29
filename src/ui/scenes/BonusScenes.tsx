@@ -78,3 +78,51 @@ export function SoonScene() {
     </svg>
   )
 }
+
+/** Head to head: two arrival boards facing each other across a VS. */
+export function DuelScene() {
+  return (
+    <svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="640" height="400" fill="#1B222A" />
+
+      {[0, 1].map((side) => {
+        const x = side === 0 ? 44 : 356
+        const fill = side === 0 ? '#FFCE00' : '#35D6F5'
+        return (
+          <g key={side}>
+            <rect x={x} y="104" width="240" height="150" rx="6" fill="#0C1013" stroke="#2C3742" strokeWidth="2" />
+            <line x1={x} y1="164" x2={x + 240} y2="164" stroke="#2C3742" strokeWidth="3" />
+            <rect x={x + 24} y="188" width="112" height="14" rx="2" fill={fill} opacity=".8" />
+            <rect x={x + 24} y="214" width="72" height="14" rx="2" fill={fill} opacity=".35" />
+            <circle cx={x + 200} cy="134" r="11" fill={fill}>
+              <animate
+                attributeName="opacity"
+                values="1;.3;1"
+                dur="2.2s"
+                begin={`${side * 1.1}s`}
+                repeatCount="indefinite"
+              />
+            </circle>
+          </g>
+        )
+      })}
+
+      <text
+        x="320"
+        y="196"
+        textAnchor="middle"
+        fontFamily="Archivo Narrow, Arial Narrow, sans-serif"
+        fontSize="52"
+        fill="#E8EDF2"
+        letterSpacing="2"
+      >
+        VS
+      </text>
+
+      <g fill="#2C3742">
+        <path d="M232 300 l34 22 l-34 22 z" />
+        <path d="M408 300 l-34 22 l34 22 z" />
+      </g>
+    </svg>
+  )
+}

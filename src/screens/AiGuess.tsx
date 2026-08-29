@@ -28,6 +28,7 @@ const SHAPE_BANK: Word[] = GESTURE_IDS.map((gesture) => ({
 }))
 
 export function AiGuess() {
+  const [started, setStarted] = useState(false)
   const [result, setResult] = useState<RoundResult | null>(null)
   const [runId, setRunId] = useState(0)
 
@@ -42,7 +43,31 @@ export function AiGuess() {
       />
     )
   }
+
+  if (!started) return <GuessStart onStart={() => setStarted(true)} />
+
   return <GuessRun key={runId} onComplete={setResult} />
+}
+
+/** The live recognizer is only mounted after the learner chooses to begin. */
+function GuessStart({ onStart }: { onStart: () => void }) {
+  return (
+    <GameShell {...TITLE}>
+      <div className="result">
+        <p className="eyebrow">On-device recognition</p>
+        <p className="taskline">{GUESS_SECONDS} seconds</p>
+        <p className="howto">
+          Copy each hand shape and see what the model reads. Your camera stays off until
+          you start, and no video leaves this device.
+        </p>
+        <div className="btnrow" style={{ justifyContent: 'center' }}>
+          <button className="btn" onClick={onStart} autoFocus>
+            Start AI guess
+          </button>
+        </div>
+      </div>
+    </GameShell>
+  )
 }
 
 function GuessRun({ onComplete }: { onComplete: (r: RoundResult) => void }) {
