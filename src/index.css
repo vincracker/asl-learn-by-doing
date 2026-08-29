@@ -338,6 +338,12 @@ a{color:inherit;text-decoration:none}
 .life.spent{background:var(--stop)}
 
 .duelhandoff{display:flex;flex-direction:column;justify-content:center;min-height:290px}
+
+/* The Go screen stands on its own instead of sitting in the two-column stage, so it
+   needs its own frame. .result is centred prose and has to be fought with overrides
+   to serve here; the handoff's stage-sized min-height is dead weight too. */
+.duelintro{max-width:680px;margin:0 auto;padding-top:12px}
+.duelintro .duelhandoff{min-height:0}
 .duelhandoff__name{
   font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
   font-size:clamp(30px,5vw,46px);line-height:1;margin:6px 0 0;color:var(--signal);

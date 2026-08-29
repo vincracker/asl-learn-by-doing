@@ -38,17 +38,6 @@ type Phase = 'arming' | 'handoff' | 'signing'
 export function RushDuel() {
   const [started, setStarted] = useState(false)
   const [completed, setCompleted] = useState<Match | null>(null)
-  const [runId, setRunId] = useState(0)
-
-  if (!started) {
-    return (
-      <GameShell {...TITLE}>
-        <div className="result" style={{ maxWidth: 680, textAlign: 'left' }}>
-          <DuelStart onGo={() => setStarted(true)} />
-        </div>
-      </GameShell>
-    )
-  }
 
   if (completed) {
     return (
@@ -57,14 +46,29 @@ export function RushDuel() {
           match={completed}
           onAgain={() => {
             setCompleted(null)
-            setRunId((n) => n + 1)
+            // Back to the Go screen, not straight into another match. The device has
+            // to physically change hands here, and the 1.5 s handoff beat is not
+            // enough warning for that on its own.
+            setStarted(false)
           }}
         />
       </GameShell>
     )
   }
 
-  return <DuelMatch key={runId} onComplete={setCompleted} />
+  if (!started) {
+    return (
+      <GameShell {...TITLE}>
+        <div className="duelintro">
+          <DuelStart onGo={() => setStarted(true)} />
+        </div>
+      </GameShell>
+    )
+  }
+
+  // Unmounted on both exits above, so every match starts from a fresh camera and a
+  // fresh Match without needing a key to force it.
+  return <DuelMatch onComplete={setCompleted} />
 }
 
 /** Mounted only after Go, so owning this component is equivalent to camera consent. */
@@ -95,11 +99,6 @@ function DuelMatch({ onComplete }: { onComplete: (match: Match) => void }) {
     matchRef.current = match
   })
 
-  const onCompleteRef = useRef(onComplete)
-  useEffect(() => {
-    onCompleteRef.current = onComplete
-  })
-
   const onResult = useCallback(
     (result: TurnResult) => {
       const current = matchRef.current
@@ -114,10 +113,10 @@ function DuelMatch({ onComplete }: { onComplete: (match: Match) => void }) {
 
       // Hand the result to the wrapper so this camera-owning component unmounts and
       // releases the MediaStream before the result screen is shown.
-      if (next.outcome) onCompleteRef.current(next)
+      if (next.outcome) onComplete(next)
       else setPhase('handoff')
     },
-    [clock.deadline],
+    [clock.deadline, onComplete],
   )
 
   // The handoff runs itself out and starts the next turn. This is the whole reason
