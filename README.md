@@ -91,8 +91,9 @@ restarting the minute every time play changes hands.
 
 Signs and scenarios are plain data in `src/content/`:
 
-- `gestures.ts` — the six hand shapes. Ids map 1:1 to MediaPipe's canned class names, and
-  the `fingers` flags drive the pictogram, so a new shape gets its icon for free.
+- `gestures.ts` — the six hand shapes. Ids map 1:1 to MediaPipe's canned class names. Per
+  finger `curl` drives the articulated pictogram and `axis` picks one of five shared CSS
+  travel animations, so a new shape gets a *moving* icon and its direction inset for free.
 - `scenarios.ts` — dialogue, phrases and tips. `ORDER` sets the play order and the unlock
   chain; `WORD_BANK` is *derived* from the scenarios, so the rush-hour pool grows by
   itself the day Restaurant or Pharmacy get built.
@@ -110,7 +111,7 @@ src/engine/       the rAF game loops: useAttempt, useSignRound, useDuelTurn
 src/duel/         two-player match rules                          (pure, unit-tested)
 src/vision/       recognizer setup, camera, overlay, practice keys
 src/progress/     session-only scores and the unlock gate
-src/ui/           pictogram, split-flap board, meters, cards, scene art
+src/ui/           pictogram + axis inset, split-flap board, meters, cards, scene art
 src/screens/      Home, ScenarioGame, RushHour, RushDuel, AiGuess
 ```
 

@@ -165,8 +165,82 @@ a{color:inherit;text-decoration:none}
 .howto{font-size:14px;line-height:1.6;color:var(--type-dim);margin:12px 0 0}
 
 .teach{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-.handbox{width:132px;height:150px;flex:none;background:var(--ink-3);border:1px solid var(--line);border-radius:var(--r)}
-.handbox svg{width:100%;height:100%}
+.handbox{
+  width:150px;height:196px;flex:none;position:relative;overflow:hidden;
+  background:var(--ink-3);border:1px solid var(--line);border-radius:var(--r);
+}
+.handbox--sm{width:112px;height:152px}
+
+/* The seam colour the pictogram strokes itself with — it has to match whatever
+   the hand is sitting on, so it lives on the frame, not inside the component. */
+.handbox{--handfig-seam:var(--ink-3)}
+.handfig{width:100%;height:100%;display:flex;flex-direction:column}
+.handfig__hand{flex:1;min-height:0;width:100%;display:block}
+.handfig__travel{
+  display:flex;align-items:center;gap:8px;flex:none;
+  padding:6px 9px;border-top:1px dashed var(--line);color:var(--type-dim);
+}
+.axinset{width:32px;height:32px;flex:none;display:block}
+.handfig__hint{
+  font-family:var(--display);font-size:9.5px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;line-height:1.3;
+}
+.handfig--sm .handfig__hint{display:none}
+.handfig--sm .handfig__travel{justify-content:center;padding:5px}
+.handfig--sm .axinset{width:26px;height:26px}
+
+/* ---------- hand travel ----------
+   Five primitives, and the gesture data picks one. They are deliberately
+   built from different properties: side-to-side holds its scale and slides,
+   forward holds its position and scales. So the two never read alike, and the
+   onion-skin trail — the same animation run a beat late — fans out for one and
+   nests concentrically for the other with no extra code.
+   Every track lands on the neutral pose at 100%, so the global
+   prefers-reduced-motion rule below freezes each hand on its target shape. */
+.hand{
+  transform-box:fill-box;
+  transform-origin:50% 96%;   /* the wrist, not the centre of the artwork */
+  animation:2.6s cubic-bezier(.42,0,.4,1) infinite both;
+}
+.ax-x{animation-name:mo-x}
+.ax-y{animation-name:mo-y}
+.ax-z{animation-name:mo-z}
+.ax-twist{animation-name:mo-twist}
+.ax-steady{animation-name:mo-steady}
+
+@keyframes mo-x{
+  0%,16%,84%,100%{transform:translateX(0) rotate(0deg)}
+  34%{transform:translateX(-7px) rotate(-11deg)}
+  52%{transform:translateX(7px) rotate(11deg)}
+  68%{transform:translateX(-4px) rotate(-7deg)}
+}
+@keyframes mo-y{
+  0%,18%,100%{transform:translateY(0)}
+  36%,64%{transform:translateY(-17px)}
+  50%,78%{transform:translateY(0)}
+}
+/* Wide and fast on purpose. The trail here is concentric rather than fanned, so
+   the only way it shows at all is if the hand outruns its own ghosts — a narrow
+   swing leaves them hidden directly behind it and the push reads as nothing. */
+@keyframes mo-z{
+  0%,30%{transform:scale(.9)}
+  50%{transform:scale(1.2)}
+  62%{transform:scale(1.16)}
+  90%,100%{transform:scale(1)}
+}
+/* Kept shallow: skew displaces the fingertips far more than the wrist, and a
+   deep one smears the trail into phantom extra fingers. */
+@keyframes mo-twist{
+  0%,18%,100%{transform:skewX(0deg) scaleX(1)}
+  46%{transform:skewX(-7deg) scaleX(.9)}
+  74%{transform:skewX(5deg) scaleX(.95)}
+}
+/* Not travel — arriving and then holding, for the sign whose tip says don't wobble. */
+@keyframes mo-steady{
+  0%{transform:translateY(11px) scale(.96)}
+  22%{transform:translateY(-2px) scale(1.02)}
+  32%,100%{transform:translateY(0) scale(1)}
+}
 
 .viewwrap{position:relative;background:#000;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;aspect-ratio:4/3}
 .viewwrap video,.viewwrap canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
