@@ -3,17 +3,24 @@ import {
   DUEL_MISTAKE_LIMIT,
   DUEL_TURN_SECONDS,
 } from '../../content/rules'
+import { GameIntro } from '../../ui/GameIntro'
 
 /** The one press in the whole match. Everything after this runs on its own. */
 export function DuelStart({ onGo }: { onGo: () => void }) {
   return (
-    <div className="panel duelhandoff">
-      <p className="eyebrow">Two players, one camera</p>
-      <p className="taskline">{DUEL_MATCH_SECONDS} seconds</p>
-      <p className="howto">
-        Your camera stays off on this screen. Press Go when both players are ready;
-        the match clock waits for camera access before it begins.
-      </p>
+    <GameIntro
+      art={<img src="/head-to-head.png" width={1672} height={941} alt="" />}
+      eyebrow="Two players, one camera"
+      title={`${DUEL_MATCH_SECONDS} seconds`}
+      description="Press Go when both players are ready. The match clock waits for camera access before it begins."
+      facts={[
+        { value: '2', label: 'Players' },
+        { value: `${DUEL_TURN_SECONDS}s`, label: 'Each turn' },
+        { value: DUEL_MISTAKE_LIMIT, label: 'Mistake limit' },
+      ]}
+      action="Go — Player 1 first"
+      onStart={onGo}
+    >
       <ul className="duelrules">
         <li>You take turns automatically — press Go once and don't touch it again.</li>
         <li>
@@ -26,11 +33,6 @@ export function DuelStart({ onGo }: { onGo: () => void }) {
         </li>
         <li>Most signs cleared when the clock stops wins. Level on clears, faster wins.</li>
       </ul>
-      <div className="btnrow">
-        <button className="btn" onClick={onGo} autoFocus>
-          Go — Player 1 first
-        </button>
-      </div>
-    </div>
+    </GameIntro>
   )
 }

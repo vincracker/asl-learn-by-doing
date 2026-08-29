@@ -59,9 +59,7 @@ export function RushDuel() {
   if (!started) {
     return (
       <GameShell {...TITLE}>
-        <div className="duelintro">
-          <DuelStart onGo={() => setStarted(true)} />
-        </div>
+        <DuelStart onGo={() => setStarted(true)} />
       </GameShell>
     )
   }

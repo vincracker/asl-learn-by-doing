@@ -38,7 +38,16 @@ export function Learn() {
           {games.map((game) => (
             <Link key={game.id} className="scen" to={game.path as string}>
               <div className="art">
-                <CategoryArt id={game.art as CategoryArtId} />
+                {game.id === 'duel' ? (
+                  <img
+                    src="/head-to-head.png"
+                    width={1672}
+                    height={941}
+                    alt="Two players facing each other while signing in a timed challenge"
+                  />
+                ) : (
+                  <CategoryArt id={game.art as CategoryArtId} />
+                )}
               </div>
               <div className="body">
                 <h2>{game.name}</h2>

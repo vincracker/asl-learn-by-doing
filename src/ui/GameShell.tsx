@@ -31,20 +31,23 @@ export function GameShell({
   children: ReactNode
 }) {
   return (
-    <div className="home">
+    <div className="home gameshell">
       <TopBar />
-      <div className="gamebar">
-        <Link className="back" to="/learn">
-          ← All games
-        </Link>
-        <div className="titlerow">
-          <h2>
-            {title} <span className="dim">· {sub}</span>
-          </h2>
-          {pips}
-        </div>
-      </div>
-      {children}
+      <main className="gamecontent">
+        <header className="gamebar">
+          <Link className="back" to="/learn">
+            Back to learning
+          </Link>
+          <div className="titlerow">
+            <div className="gameheading">
+              <h1>{title}</h1>
+              <p className="gamesub">{sub}</p>
+            </div>
+            {pips}
+          </div>
+        </header>
+        {children}
+      </main>
     </div>
   )
 }

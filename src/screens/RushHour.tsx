@@ -5,6 +5,8 @@ import { WORD_BANK } from '../content/scenarios'
 import { useSignRound, type RoundResult } from '../engine/useSignRound'
 import { useProgress } from '../progress/useProgress'
 import { CameraView } from '../ui/CameraView'
+import { CategoryArt } from '../ui/CategoryArt'
+import { GameIntro } from '../ui/GameIntro'
 import { GameShell } from '../ui/GameShell'
 import { HandPictogram } from '../ui/HandPictogram'
 import { Meter } from '../ui/Meter'
@@ -59,19 +61,19 @@ export function RushHour() {
 function RushStart({ onStart }: { onStart: () => void }) {
   return (
     <GameShell {...TITLE}>
-      <div className="result">
-        <p className="eyebrow">Ready when you are</p>
-        <p className="taskline">{RUSH_SECONDS} seconds</p>
-        <p className="howto">
-          Recall as many phrases as you can. Your camera stays off until you start, then
-          the first phrase appears as soon as camera access is ready.
-        </p>
-        <div className="btnrow" style={{ justifyContent: 'center' }}>
-          <button className="btn" onClick={onStart} autoFocus>
-            Start Rush hour
-          </button>
-        </div>
-      </div>
+      <GameIntro
+        art={<CategoryArt id="rush" />}
+        eyebrow="Ready when you are"
+        title={`${RUSH_SECONDS} seconds`}
+        description="Recall as many phrases as you can. Your camera stays off until you start, then the first phrase appears as soon as camera access is ready."
+        facts={[
+          { value: WORD_BANK.length, label: 'Phrases' },
+          { value: 'Live', label: 'Camera scoring' },
+          { value: 'Best', label: 'Session record' },
+        ]}
+        action="Start Rush hour"
+        onStart={onStart}
+      />
     </GameShell>
   )
 }
@@ -125,9 +127,9 @@ function RushRun({ onComplete }: { onComplete: (r: RoundResult) => void }) {
                 <div className="handbox handbox--sm">
                   <HandPictogram gesture={word.gesture} size="sm" />
                 </div>
-                <p className="howto" style={{ flex: 1, minWidth: 180, margin: 0 }}>
-                  {word.tip}
-                </p>
+                <div className="teachcopy">
+                  <p className="howto">{word.tip}</p>
+                </div>
               </div>
             )}
 
