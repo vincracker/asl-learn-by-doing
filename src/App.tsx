@@ -7,13 +7,13 @@ import { SCENARIOS } from './scenarios'
 
 export default function App() {
   return (
-    <div className="app">
-      <header className="topbar">
-        <div className="topbar__brand">
-          <strong>Signpost</strong>
-          <span>practise everyday ASL</span>
+    <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6 pt-7 pb-16">
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-baseline gap-2.5">
+          <strong className="text-xl">Signpost</strong>
+          <span className="text-sm opacity-60">practise everyday ASL</span>
         </div>
-        <nav className="nav">
+        <nav className="flex flex-wrap gap-2">
           <NavLink to="/" end className={navClass}>Home</NavLink>
           {SCENARIOS.map((s) => (
             <NavLink key={s.id} to={`/scenario/${s.id}`} className={navClass}>
@@ -30,11 +30,12 @@ export default function App() {
           <Route path="/practice/:signId" element={<LearnMimic />} />
           <Route path="/scenario/:scenarioId" element={<ScenarioGame />} />
           {import.meta.env.DEV && <Route path="/author" element={<Author />} />}
-          <Route path="*" element={<p className="muted">Nothing here.</p>} />
+          <Route path="*" element={<p className="opacity-60">Nothing here.</p>} />
         </Routes>
       </main>
     </div>
   )
 }
 
-const navClass = ({ isActive }: { isActive: boolean }) => (isActive ? 'is-active' : '')
+const navClass = ({ isActive }: { isActive: boolean }) =>
+  `btn btn-sm rounded-selector ${isActive ? 'btn-primary' : 'btn-ghost'}`

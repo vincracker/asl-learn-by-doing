@@ -26,17 +26,19 @@ export function CaptureControls({ mode, onModeChange, state, onTap, disabled }: 
   const active = state !== 'idle'
 
   return (
-    <div className="stack" style={{ gap: 10 }}>
-      <div className="row">
+    <div className="flex flex-col gap-2.5">
+      <div role="tablist" className="tabs tabs-box">
         <button
-          className={`btn ${mode === 'tap' ? 'btn--primary' : 'btn--ghost'}`}
+          role="tab"
+          className={`tab ${mode === 'tap' ? 'tab-active' : ''}`}
           onClick={() => onModeChange('tap')}
           disabled={disabled}
         >
           Tap to sign
         </button>
         <button
-          className={`btn ${mode === 'auto' ? 'btn--primary' : 'btn--ghost'}`}
+          role="tab"
+          className={`tab ${mode === 'auto' ? 'tab-active' : ''}`}
           onClick={() => onModeChange('auto')}
           disabled={disabled}
         >
@@ -47,20 +49,20 @@ export function CaptureControls({ mode, onModeChange, state, onTap, disabled }: 
       {mode === 'tap' ? (
         <>
           <button
-            className={`btn ${active ? '' : 'btn--primary'}`}
+            className={`btn ${active ? 'btn-neutral' : 'btn-primary'}`}
             onClick={onTap}
             disabled={disabled}
           >
             {TAP_LABEL[state]}
           </button>
-          <p className="muted">
+          <p className="text-sm opacity-60">
             {active
               ? 'Tap again to cancel. The take ends on its own once you stop moving.'
               : 'Tap, get into position, then sign. Space bar works too.'}
           </p>
         </>
       ) : (
-        <p className="muted">Start moving to begin; pause when you finish the sign.</p>
+        <p className="text-sm opacity-60">Start moving to begin; pause when you finish the sign.</p>
       )}
     </div>
   )

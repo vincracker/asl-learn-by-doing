@@ -60,84 +60,104 @@ export function ScenarioGame() {
     [scenario],
   )
 
-  if (!scenario) return <p className="muted">Unknown scenario. <Link to="/">Back home</Link>.</p>
+  if (!scenario) {
+    return (
+      <p className="opacity-60">
+        Unknown scenario. <Link className="link link-accent" to="/">Back home</Link>.
+      </p>
+    )
+  }
 
   if (!beat) {
     return (
-      <div className="panel stack">
-        <h2>{scenario.emoji} Scene complete</h2>
-        <p className="muted">
-          You signed {passed.length} of {progress.length} prompts well enough to pass.
-        </p>
-        <div className="row">
-          <button className="btn btn--primary" onClick={() => { setIndex(0); setPassed([]) }}>
-            Run it again
-          </button>
-          <Link className="btn btn--ghost" to="/">Back home</Link>
+      <div className="card border-2 border-base-300 bg-base-100">
+        <div className="card-body gap-3">
+          <h2 className="card-title text-2xl">{scenario.emoji} Scene complete</h2>
+          <p className="opacity-70">
+            You signed {passed.length} of {progress.length} prompts well enough to pass.
+          </p>
+          <div className="card-actions">
+            <button className="btn btn-primary" onClick={() => { setIndex(0); setPassed([]) }}>
+              Run it again
+            </button>
+            <Link className="btn btn-ghost" to="/">Back home</Link>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="layout">
+    <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,1fr)]">
       <CameraStage {...capture} frameRef={capture.frameRef} />
 
-      <aside className="stack">
-        <div className="panel stack">
-          <div className="row" style={{ justifyContent: 'space-between' }}>
-            <h2 style={{ fontSize: 18 }}>{scenario.emoji} {scenario.title}</h2>
-            <ProgressDots beats={scenario.beats} index={index} />
-          </div>
-
-          {beat.kind === 'npc' ? (
-            <>
-              <div className="beat">
-                <span className="beat__speaker">{beat.speaker}</span>
-                <p className="beat__text">{beat.text}</p>
-              </div>
-              <button className="btn btn--primary" onClick={advance}>Continue</button>
-            </>
-          ) : (
-            <div className="beat">
-              <span className="beat__speaker">Your turn</span>
-              <p className="beat__text">{beat.prompt}</p>
-              {beat.hint && <p className="muted">{beat.hint}</p>}
-              <p className="muted">
-                Sign: <strong>{signById(beat.signId)?.gloss ?? beat.signId}</strong>
-              </p>
+      <aside className="flex flex-col gap-3">
+        <div className="card border-2 border-base-300 bg-base-100">
+          <div className="card-body gap-3">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="card-title text-lg">{scenario.emoji} {scenario.title}</h2>
+              <ProgressDots beats={scenario.beats} index={index} />
             </div>
-          )}
+
+            {beat.kind === 'npc' ? (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xs font-bold uppercase tracking-wider opacity-60">
+                    {beat.speaker}
+                  </span>
+                  <p className="leading-relaxed">{beat.text}</p>
+                </div>
+                <button className="btn btn-primary" onClick={advance}>Continue</button>
+              </>
+            ) : (
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider opacity-60">
+                  Your turn
+                </span>
+                <p className="leading-relaxed">{beat.prompt}</p>
+                {beat.hint && <p className="text-sm opacity-60">{beat.hint}</p>}
+                <p className="text-sm opacity-60">
+                  Sign: <strong>{signById(beat.signId)?.gloss ?? beat.signId}</strong>
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {isSignBeat && (
-          <div className="panel stack">
-            {scorable ? (
-              <>
-                <CaptureControls
-                  mode={mode}
-                  onModeChange={setMode}
-                  state={capture.captureState}
-                  onTap={capture.tap}
-                />
-                <AttemptPanel attempt={attempt} />
-              </>
-            ) : (
-              <p className="muted">
-                This sign has no template recorded yet, so it can't be scored — practise it
-                and continue.
-              </p>
-            )}
+          <div className="card border-2 border-base-300 bg-base-100">
+            <div className="card-body gap-3">
+              {scorable ? (
+                <>
+                  <CaptureControls
+                    mode={mode}
+                    onModeChange={setMode}
+                    state={capture.captureState}
+                    onTap={capture.tap}
+                  />
+                  <AttemptPanel attempt={attempt} />
+                </>
+              ) : (
+                <p className="text-sm opacity-60">
+                  This sign has no template recorded yet, so it can't be scored — practise it
+                  and continue.
+                </p>
+              )}
 
-            <div className="row">
-              <Link className="btn btn--ghost" to={`/practice/${beat.signId}`}>Practise this sign</Link>
-              {(misses >= SKIP_AFTER || !scorable) && (
-                <button className="btn" onClick={advance}>Skip this one</button>
+              <div className="card-actions">
+                <Link className="btn btn-ghost btn-sm" to={`/practice/${beat.signId}`}>
+                  Practise this sign
+                </Link>
+                {(misses >= SKIP_AFTER || !scorable) && (
+                  <button className="btn btn-sm" onClick={advance}>Skip this one</button>
+                )}
+              </div>
+              {misses > 0 && misses < SKIP_AFTER && (
+                <span className="text-sm opacity-60">
+                  {SKIP_AFTER - misses} more tries before you can skip.
+                </span>
               )}
             </div>
-            {misses > 0 && misses < SKIP_AFTER && (
-              <span className="muted">{SKIP_AFTER - misses} more tries before you can skip.</span>
-            )}
           </div>
         )}
 
@@ -149,11 +169,13 @@ export function ScenarioGame() {
 
 function ProgressDots({ beats, index }: { beats: Beat[]; index: number }) {
   return (
-    <div className="progress-dots">
+    <div className="flex gap-1.5">
       {beats.map((beat, i) => (
         <span
           key={i}
-          className={`dot ${i < index ? 'dot--done' : ''} ${i === index ? 'dot--current' : ''}`}
+          className={`size-2 rounded-full ${
+            i === index ? 'bg-primary' : i < index ? 'bg-accent' : 'bg-base-300'
+          }`}
           title={beat.kind === 'sign' ? beat.signId : 'dialogue'}
         />
       ))}

@@ -4,7 +4,7 @@
  */
 export function Disclaimer() {
   return (
-    <p className="disclaimer">
+    <p className="border-l-2 border-base-300 pl-3 text-xs leading-relaxed opacity-70">
       This checks your handshape, position and movement — it can't see facial grammar,
       which carries real meaning in ASL. Treat it as practice feedback, not assessment,
       and learn from Deaf teachers and native signers. Video never leaves your device.
