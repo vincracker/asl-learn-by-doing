@@ -20,6 +20,14 @@ export const BONUS: BonusGame[] = [
     art: 'rush',
   },
   {
+    id: 'duel',
+    name: 'Head to head',
+    blurb: 'Rush hour for two. Sixty seconds, turns handed over automatically, a random phrase each time — most cleared takes it.',
+    chips: ['2 players', '60 s', '5 mistakes'],
+    path: '/rush/duel',
+    art: 'duel',
+  },
+  {
     id: 'guess',
     name: 'AI guess',
     blurb: 'Make any sign you like. The model names it and shows how sure it is. Thirty seconds, as many as you can hit.',
