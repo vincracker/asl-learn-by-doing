@@ -6,6 +6,5 @@ cd "$(dirname "$0")/.."
 mkdir -p public/mp/models
 BASE=https://storage.googleapis.com/mediapipe-models
 fetch() { echo "fetching $2"; curl -fsSL "$1" -o "public/mp/models/$2"; }
-fetch "$BASE/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task" hand_landmarker.task
-fetch "$BASE/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite" blaze_face_short_range.tflite
+fetch "$BASE/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task" gesture_recognizer.task
 ls -lh public/mp/models
