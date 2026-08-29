@@ -13,6 +13,7 @@ type Scores = Partial<Record<SceneId, number>>
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [scores, setScores] = useState<Scores>({})
   const [rush, setRush] = useState({ best: 0, runs: 0 })
+  const [sixSeven, setSixSeven] = useState({ best: 0, runs: 0 })
 
   const getScore = useCallback((id: SceneId) => scores[id] ?? null, [scores])
 
@@ -33,6 +34,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setRush((prev) => ({ best: Math.max(prev.best, hits), runs: prev.runs + 1 }))
   }, [])
 
+  const recordSixSeven = useCallback((reps: number) => {
+    setSixSeven((prev) => ({ best: Math.max(prev.best, reps), runs: prev.runs + 1 }))
+  }, [])
+
   const value = useMemo(
     () => ({
       getScore,
@@ -41,8 +46,21 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       rushBest: rush.best,
       rushRuns: rush.runs,
       recordRush,
+      sixSevenBest: sixSeven.best,
+      sixSevenRuns: sixSeven.runs,
+      recordSixSeven,
     }),
-    [getScore, setScore, isUnlocked, rush.best, rush.runs, recordRush],
+    [
+      getScore,
+      setScore,
+      isUnlocked,
+      rush.best,
+      rush.runs,
+      recordRush,
+      sixSeven.best,
+      sixSeven.runs,
+      recordSixSeven,
+    ],
   )
 
   return <ProgressContext value={value}>{children}</ProgressContext>

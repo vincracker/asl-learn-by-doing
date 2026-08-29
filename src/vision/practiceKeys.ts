@@ -38,3 +38,39 @@ export function installPracticeKeys(): () => void {
     timer = null
   }
 }
+
+/**
+ * Keyboard stand-in for the 6-7 motion.
+ *
+ * The shape keys above can't express this one: 6-7 is a pair of hands crossing over
+ * time, not a held shape. So press 6 and 7 alternately instead — each press throws the
+ * pair to one side, and alternating them lands beats exactly as the hands would.
+ *
+ * Module state for the same reason as `held`: the round loop reads it every frame from
+ * inside requestAnimationFrame.
+ */
+const POLE_HOLD_MS = 1600
+
+let pole: -1 | 0 | 1 = 0
+let poleAt = -Infinity
+
+/** The side the keys are holding, and whether the last press is still fresh. */
+export function getPracticePole(now: number): { pole: -1 | 0 | 1; fresh: boolean } {
+  return { pole, fresh: now - poleAt < POLE_HOLD_MS }
+}
+
+/** Starts listening for 6 and 7. Returns the matching cleanup, for a React effect. */
+export function installPracticePole(): () => void {
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key !== '6' && e.key !== '7') return
+    pole = e.key === '6' ? -1 : 1
+    poleAt = performance.now()
+  }
+
+  window.addEventListener('keydown', onKeyDown)
+  return () => {
+    window.removeEventListener('keydown', onKeyDown)
+    pole = 0
+    poleAt = -Infinity
+  }
+}

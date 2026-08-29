@@ -28,6 +28,15 @@ export const BONUS: BonusGame[] = [
     art: 'guess',
   },
   {
+    id: 'sixseven',
+    name: '6-7',
+    blurb:
+      'The meme, judged strictly. Two flat palms apart, one up and one down, then swap. Sixty seconds to rack up as many as you can.',
+    chips: ['60 s', 'Two hands', 'Motion'],
+    path: '/six-seven',
+    art: 'sixseven',
+  },
+  {
     id: 'mirror',
     name: 'Mirror match',
     blurb: 'Two signs on screen, one is yours. Copy the right one before the timer runs out.',
