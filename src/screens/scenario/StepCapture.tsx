@@ -50,9 +50,9 @@ export function StepCapture({ step, onDone }: { step: Step; onDone: (score: numb
             <div className="handbox handbox--sm">
               <HandPictogram gesture={step.gesture} size="sm" />
             </div>
-            <p className="howto" style={{ flex: 1, minWidth: 180 }}>
-              {step.tip}
-            </p>
+            <div className="teachcopy">
+              <p className="howto">{step.tip}</p>
+            </div>
           </div>
 
           <Meter

@@ -64,8 +64,10 @@ function GestureTeach({ gesture, tip }: { gesture: GestureId; tip: string }) {
       <div className="handbox">
         <HandPictogram gesture={gesture} />
       </div>
-      <p className="label">{GESTURES[gesture].label}</p>
-      <p className="howto">{tip}</p>
+      <div className="teachcopy">
+        <p className="label">{GESTURES[gesture].label}</p>
+        <p className="howto">{tip}</p>
+      </div>
     </div>
   )
 }

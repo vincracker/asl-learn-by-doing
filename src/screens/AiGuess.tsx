@@ -5,6 +5,8 @@ import { GUESS_SECONDS } from '../content/rules'
 import type { Word } from '../content/scenarios'
 import { useSignRound, type RoundResult } from '../engine/useSignRound'
 import { CameraView } from '../ui/CameraView'
+import { CategoryArt } from '../ui/CategoryArt'
+import { GameIntro } from '../ui/GameIntro'
 import { GameShell } from '../ui/GameShell'
 import { HandPictogram } from '../ui/HandPictogram'
 import { PracticeNotice } from '../ui/PracticeNotice'
@@ -53,19 +55,19 @@ export function AiGuess() {
 function GuessStart({ onStart }: { onStart: () => void }) {
   return (
     <GameShell {...TITLE}>
-      <div className="result">
-        <p className="eyebrow">On-device recognition</p>
-        <p className="taskline">{GUESS_SECONDS} seconds</p>
-        <p className="howto">
-          Copy each hand shape and see what the model reads. Your camera stays off until
-          you start, and no video leaves this device.
-        </p>
-        <div className="btnrow" style={{ justifyContent: 'center' }}>
-          <button className="btn" onClick={onStart} autoFocus>
-            Start AI guess
-          </button>
-        </div>
-      </div>
+      <GameIntro
+        art={<CategoryArt id="guess" />}
+        eyebrow="On-device recognition"
+        title={`${GUESS_SECONDS} seconds`}
+        description="Copy each hand shape and see what the model reads. Your camera stays off until you start, and no video leaves this device."
+        facts={[
+          { value: GESTURE_IDS.length, label: 'Hand shapes' },
+          { value: 'Live', label: 'Model feedback' },
+          { value: 'Private', label: 'On device' },
+        ]}
+        action="Start AI guess"
+        onStart={onStart}
+      />
     </GameShell>
   )
 }
