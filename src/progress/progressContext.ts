@@ -9,6 +9,9 @@ export type ProgressState = {
   rushBest: number
   rushRuns: number
   recordRush: (hits: number) => void
+  sixSevenBest: number
+  sixSevenRuns: number
+  recordSixSeven: (reps: number) => void
 }
 
 export const ProgressContext = createContext<ProgressState | null>(null)

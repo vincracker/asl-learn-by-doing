@@ -56,3 +56,8 @@ export const HANDS = {
   pointingUp: () => makeHand({ fingers: [true, false, false, false] }),
   iLoveYou: () => makeHand({ fingers: [true, false, false, true], thumbOut: true }),
 }
+
+/** Moves a whole hand, for building two-hand frames out of one template. */
+export function shiftHand(lm: Landmark[], dx: number, dy: number): Landmark[] {
+  return lm.map((p) => ({ ...p, x: p.x + dx, y: p.y + dy }))
+}

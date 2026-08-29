@@ -126,3 +126,75 @@ export function DuelScene() {
     </svg>
   )
 }
+
+/** 6-7: two palms on a see-saw, swapping, with the count above them. */
+export function SixSevenScene() {
+  const palm = (cx: number) => (
+    <g>
+      {[-16, -5.5, 5, 15.5].map((dx, i) => (
+        <rect
+          key={dx}
+          x={cx + dx - 4}
+          y={-[22, 26, 24, 19][i]}
+          width="8"
+          height={[22, 26, 24, 19][i] + 8}
+          rx="4"
+          fill="#FFCE00"
+        />
+      ))}
+      <rect x={cx - 20} y="-3" width="40" height="22" rx="10" fill="#FFCE00" />
+    </g>
+  )
+
+  return (
+    <svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="640" height="400" fill="#1B222A" />
+
+      <text
+        x="320"
+        y="126"
+        textAnchor="middle"
+        fontFamily="Archivo Narrow, Arial Narrow, sans-serif"
+        fontSize="86"
+        fill="#35D6F5"
+        letterSpacing="10"
+      >
+        6 7
+      </text>
+
+      <g transform="translate(0 250)">
+        <line x1="196" y1="0" x2="444" y2="0" stroke="#2C3742" strokeWidth="4" strokeLinecap="round">
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            values="9 320 0;-9 320 0;9 320 0"
+            dur="1.4s"
+            repeatCount="indefinite"
+          />
+        </line>
+        <path d="M320 4 l-13 22 h26 z" fill="#2C3742" />
+
+        <g>
+          {palm(210)}
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 38;0 -38;0 38"
+            dur="1.4s"
+            repeatCount="indefinite"
+          />
+        </g>
+        <g>
+          {palm(430)}
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 -38;0 38;0 -38"
+            dur="1.4s"
+            repeatCount="indefinite"
+          />
+        </g>
+      </g>
+    </svg>
+  )
+}

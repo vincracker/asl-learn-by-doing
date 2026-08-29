@@ -1,9 +1,9 @@
 import type { ReactElement } from 'react'
 import { AirportScene } from './AirportScene'
 import { BusScene } from './BusScene'
-import { DuelScene, GuessScene, RushScene, SoonScene } from './BonusScenes'
+import { DuelScene, GuessScene, RushScene, SixSevenScene, SoonScene } from './BonusScenes'
 
-export type SceneArtId = 'airport' | 'bus' | 'guess' | 'rush' | 'duel' | 'soon'
+export type SceneArtId = 'airport' | 'bus' | 'guess' | 'rush' | 'duel' | 'sixseven' | 'soon'
 
 const SCENE_ART: Record<SceneArtId, () => ReactElement> = {
   airport: AirportScene,
@@ -11,6 +11,7 @@ const SCENE_ART: Record<SceneArtId, () => ReactElement> = {
   guess: GuessScene,
   rush: RushScene,
   duel: DuelScene,
+  sixseven: SixSevenScene,
   soon: SoonScene,
 }
 
