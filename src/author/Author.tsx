@@ -87,100 +87,112 @@ export function Author() {
   const shaky = calibration !== null && takes.length > 1 && calibration.selfAgreement < AGREEMENT_FLOOR
 
   return (
-    <div className="layout">
+    <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,1fr)]">
       <CameraStage {...capture} frameRef={capture.frameRef} />
 
-      <aside className="stack">
-        <div className="panel stack">
-          <h2 style={{ fontSize: 18 }}>Record a sign</h2>
-          <select
-            className="btn"
-            value={signId}
-            onChange={(e) => switchSign(e.target.value)}
-          >
-            {SIGN_CATALOG.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.gloss}{hasTemplate(s.id) ? ' ✓' : ''}
-              </option>
+      <aside className="flex flex-col gap-3">
+        <div className="card border-2 border-base-300 bg-base-100">
+          <div className="card-body gap-3">
+            <h2 className="card-title text-lg">Record a sign</h2>
+            <select
+              className="select select-bordered w-full"
+              value={signId}
+              onChange={(e) => switchSign(e.target.value)}
+            >
+              {SIGN_CATALOG.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.gloss}{hasTemplate(s.id) ? ' ✓' : ''}
+                </option>
+              ))}
+            </select>
+            <p className="text-sm opacity-70">{meta.how}</p>
+          </div>
+        </div>
+
+        <div className="card border-2 border-base-300 bg-base-100">
+          <div className="card-body gap-3">
+            <CaptureControls
+              mode={mode}
+              onModeChange={setMode}
+              state={capture.captureState}
+              onTap={handleTap}
+            />
+            <p className="text-sm opacity-60">
+              Record {RECOMMENDED_TAKES} takes of the same performance. Consistency matters
+              more than perfection — the spread between takes sets the pass threshold.
+            </p>
+          </div>
+        </div>
+
+        <div className="card border-2 border-base-300 bg-base-100">
+          <div className="card-body gap-3">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold uppercase tracking-wide opacity-60">
+                Takes ({takes.length})
+              </h3>
+              {takes.length > 0 && (
+                <button className="btn btn-ghost btn-xs" onClick={clearTakes}>Clear all</button>
+              )}
+            </div>
+
+            {takes.length === 0 && <p className="text-sm opacity-60">No takes yet.</p>}
+            {takes.map((take, i) => (
+              <div key={i} className="flex items-center justify-between gap-2">
+                <span className="text-sm opacity-60">
+                  Take {i + 1} — {take.sequence.length} frames{take.clip ? ' + clip' : ''}
+                </span>
+                <button className="btn btn-ghost btn-xs" onClick={() => removeTake(i)}>
+                  Remove
+                </button>
+              </div>
             ))}
-          </select>
-          <p className="muted">{meta.how}</p>
-        </div>
 
-        <div className="panel stack">
-          <CaptureControls
-            mode={mode}
-            onModeChange={setMode}
-            state={capture.captureState}
-            onTap={handleTap}
-          />
-          <p className="muted">
-            Record {RECOMMENDED_TAKES} takes of the same performance. Consistency matters
-            more than perfection — the spread between takes sets the pass threshold.
-          </p>
-        </div>
+            {calibration && takes.length > 1 && (
+              <>
+                <ScoreMeter
+                  score={calibration.selfAgreement}
+                  passed={!shaky}
+                  label="Take consistency"
+                />
+                {shaky && (
+                  <p className="text-sm opacity-60">
+                    Your takes disagree a lot. Re-record them the same way, or learners will
+                    be scored against an average of three different signs.
+                  </p>
+                )}
+                {calibration.nearestOther && (
+                  <span className="text-sm opacity-60">
+                    closest existing sign:{' '}
+                    <strong>{calibration.nearestOther.id}</strong>{' '}
+                    (d {calibration.nearestOther.distance.toFixed(3)})
+                    {calibration.nearestOther.distance < 0.25 &&
+                      ' — very close; these two may get confused.'}
+                  </span>
+                )}
+                <span className="text-sm opacity-60">
+                  pass distance {calibration.passDistance.toFixed(3)} · tau {calibration.tau.toFixed(3)}
+                </span>
+              </>
+            )}
 
-        <div className="panel stack">
-          <div className="row" style={{ justifyContent: 'space-between' }}>
-            <h3 style={{ fontSize: 15 }}>Takes ({takes.length})</h3>
-            {takes.length > 0 && (
-              <button className="btn btn--ghost" onClick={clearTakes}>Clear all</button>
+            <button
+              className="btn btn-primary"
+              disabled={!calibration || saveState === 'saving'}
+              onClick={handleSave}
+            >
+              {saveState === 'saving' ? 'Saving…' : `Save ${meta.gloss}`}
+            </button>
+
+            {saveState === 'saved' && (
+              <p className="text-sm opacity-60">
+                Saved to src/signs/templates/{signId}.json and public/clips/{signId}.webm —
+                reload to pick it up.
+              </p>
+            )}
+            {saveState === 'error' && (
+              <p className="text-sm text-error">Save failed: {saveError}</p>
             )}
           </div>
-
-          {takes.length === 0 && <p className="muted">No takes yet.</p>}
-          {takes.map((take, i) => (
-            <div key={i} className="row" style={{ justifyContent: 'space-between' }}>
-              <span className="muted">
-                Take {i + 1} — {take.sequence.length} frames{take.clip ? ' + clip' : ''}
-              </span>
-              <button className="btn btn--ghost" onClick={() => removeTake(i)}>Remove</button>
-            </div>
-          ))}
-
-          {calibration && takes.length > 1 && (
-            <>
-              <ScoreMeter
-                score={calibration.selfAgreement}
-                passed={!shaky}
-                label="Take consistency"
-              />
-              {shaky && (
-                <p className="muted">
-                  Your takes disagree a lot. Re-record them the same way, or learners will
-                  be scored against an average of three different signs.
-                </p>
-              )}
-              {calibration.nearestOther && (
-                <span className="muted">
-                  closest existing sign:{' '}
-                  <strong>{calibration.nearestOther.id}</strong>{' '}
-                  (d {calibration.nearestOther.distance.toFixed(3)})
-                  {calibration.nearestOther.distance < 0.25 &&
-                    ' — very close; these two may get confused.'}
-                </span>
-              )}
-              <span className="muted">
-                pass distance {calibration.passDistance.toFixed(3)} · tau {calibration.tau.toFixed(3)}
-              </span>
-            </>
-          )}
-
-          <button
-            className="btn btn--primary"
-            disabled={!calibration || saveState === 'saving'}
-            onClick={handleSave}
-          >
-            {saveState === 'saving' ? 'Saving…' : `Save ${meta.gloss}`}
-          </button>
-
-          {saveState === 'saved' && (
-            <p className="muted">
-              Saved to src/signs/templates/{signId}.json and public/clips/{signId}.webm —
-              reload to pick it up.
-            </p>
-          )}
-          {saveState === 'error' && <p className="muted">Save failed: {saveError}</p>}
         </div>
       </aside>
     </div>

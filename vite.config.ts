@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import { writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 
@@ -52,7 +53,7 @@ function authorSavePlugin(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), authorSavePlugin()],
+  plugins: [react(), tailwindcss(), authorSavePlugin()],
   // MediaPipe ships large prebuilt wasm; leave it out of dep optimization.
   optimizeDeps: { exclude: ['@mediapipe/tasks-vision'] },
 })

@@ -8,17 +8,16 @@ type Props = {
 export function ScoreMeter({ score, passed, label }: Props) {
   const pct = Math.round(Math.min(1, Math.max(0, score)) * 100)
   return (
-    <div className="stack" style={{ gap: 6 }}>
-      <div className="row" style={{ justifyContent: 'space-between' }}>
-        <span className="muted">{label ?? 'Match'}</span>
-        <span className="muted">{pct}%</span>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between text-sm opacity-60">
+        <span>{label ?? 'Match'}</span>
+        <span>{pct}%</span>
       </div>
-      <div className="meter">
-        <div
-          className="meter__fill"
-          style={{ width: `${pct}%`, background: passed ? 'var(--accent)' : 'var(--warn)' }}
-        />
-      </div>
+      <progress
+        className={`progress h-2 ${passed ? 'progress-success' : 'progress-warning'}`}
+        value={pct}
+        max={100}
+      />
     </div>
   )
 }

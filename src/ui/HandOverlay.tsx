@@ -65,7 +65,7 @@ function drawHand(
   const px = (i: number) => [landmarks[i].x * canvas.width, landmarks[i].y * canvas.height] as const
 
   ctx.lineWidth = 3
-  ctx.strokeStyle = active ? 'rgba(94, 234, 212, 0.95)' : 'rgba(148, 163, 184, 0.7)'
+  ctx.strokeStyle = active ? 'oklch(82% 0.189 84.429 / 0.95)' : 'oklch(90% 0.076 70.697 / 0.65)'
   ctx.beginPath()
   for (const [a, b] of BONES) {
     ctx.moveTo(...px(a))
@@ -73,7 +73,7 @@ function drawHand(
   }
   ctx.stroke()
 
-  ctx.fillStyle = active ? '#5eead4' : '#cbd5e1'
+  ctx.fillStyle = active ? 'oklch(82% 0.189 84.429)' : 'oklch(90% 0.076 70.697)'
   for (let i = 0; i < landmarks.length; i++) {
     const [x, y] = px(i)
     ctx.beginPath()
@@ -87,7 +87,7 @@ function drawFace(ctx: CanvasRenderingContext2D, frame: Frame, canvas: HTMLCanva
   if (!face) return
   const w = face.width * canvas.width
   const h = w * 1.3
-  ctx.strokeStyle = 'rgba(129, 140, 248, 0.45)'
+  ctx.strokeStyle = 'oklch(55% 0.195 38.402 / 0.5)'
   ctx.lineWidth = 2
   ctx.strokeRect(face.centerX * canvas.width - w / 2, face.centerY * canvas.height - h / 2, w, h)
 }

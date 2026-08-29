@@ -32,10 +32,10 @@ export function CameraStage({
       {loading && <StageMessage status={cameraStatus} visionStatus={visionStatus} error={error} />}
 
       <div className="stage__hud">
-        <span className={`pill ${state !== 'idle' ? 'pill--live' : ''}`}>
+        <span className={`badge badge-sm uppercase ${state !== 'idle' ? 'is-live' : ''}`}>
           {state === 'capturing' ? 'recording' : state === 'armed' ? 'ready — move to start' : 'idle'}
         </span>
-        <span className="pill pill--muted">{fps} fps</span>
+        <span className="badge badge-sm">{fps} fps</span>
       </div>
 
       <div className="stage__content">{children}</div>
@@ -67,8 +67,8 @@ function StageMessage({
 function Veil({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="stage__veil">
-      <h2>{title}</h2>
-      <p>{children}</p>
+      <h2 className="text-xl">{title}</h2>
+      <p className="max-w-[42ch] text-sm opacity-80">{children}</p>
     </div>
   )
 }
