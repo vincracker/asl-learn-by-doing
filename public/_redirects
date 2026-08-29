@@ -1,0 +1,5 @@
+# Client-side routing: /scenario/airport and friends are React Router paths, not
+# files, so every unmatched request has to fall back to the app shell.
+# Read by both Netlify and Cloudflare Pages. Lives in public/ rather than dist/
+# so a build can never drop it.
+/*  /index.html  200

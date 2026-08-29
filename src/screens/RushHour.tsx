@@ -94,8 +94,8 @@ function RushRun({ onComplete }: { onComplete: (r: RoundResult) => void }) {
 
             {revealed && word && (
               <div className="teach" style={{ marginTop: 14 }}>
-                <div className="handbox" style={{ width: 96, height: 110 }}>
-                  <HandPictogram gesture={word.gesture} />
+                <div className="handbox handbox--sm">
+                  <HandPictogram gesture={word.gesture} size="sm" />
                 </div>
                 <p className="howto" style={{ flex: 1, minWidth: 180, margin: 0 }}>
                   {word.tip}

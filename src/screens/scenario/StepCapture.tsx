@@ -47,8 +47,8 @@ export function StepCapture({ step, onDone }: { step: Step; onDone: (score: numb
           <p className="taskline">“{step.phrase}”</p>
 
           <div className="teach" style={{ marginTop: 14 }}>
-            <div className="handbox" style={{ width: 96, height: 110 }}>
-              <HandPictogram gesture={step.gesture} />
+            <div className="handbox handbox--sm">
+              <HandPictogram gesture={step.gesture} size="sm" />
             </div>
             <p className="howto" style={{ flex: 1, minWidth: 180 }}>
               {step.tip}

@@ -64,6 +64,9 @@ function GestureTeach({ gesture, tip }: { gesture: GestureId; tip: string }) {
           {GESTURES[gesture].label}
         </p>
         <p className="howto">{tip}</p>
+        <p className="howto" style={{ marginTop: 8, fontSize: 12.5 }}>
+          The shape is what gets scored — the arrow shows how the sign really travels.
+        </p>
       </div>
     </div>
   )
