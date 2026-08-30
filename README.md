@@ -1,13 +1,24 @@
 # HandsUp — learn signs, scenario by scenario
 
-**Deaf people learn our languages every day. This flips it.**
+**This block isn't missing. It's one-way.**
 
-A browser game that teaches hearing people to sign, set in the places you'd actually need
-it: an airport check-in desk, a bus door. Your webcam watches your hand and scores the
-shape in real time. No account, no install, no video leaves your device.
+A bus, a pharmacy counter, an airport desk — those blocks all exist and work. What's
+missing is the joint between them and a Deaf person: a shared language at the point of
+contact. And that joint has only ever been built from one side. Deaf people learn to read
+our language, write it, lip-read it. Hearing people build nothing back.
+
+HandsUp adds material to the other side of that joint. It's a browser game that teaches
+hearing people to sign, set in the places you'd actually need it. Your webcam watches your
+hand and scores the shape in real time. No account, no install, no video leaves your
+device.
 
 Two scenarios of three signs each, plus three bonus games — including a local two-player
 duel.
+
+> **On the brief.** Almost all "connection technology" inserts itself *between* people —
+> translation apps, captioning, text relay. They work, and they all leave the Deaf person
+> dependent on your phone being charged. This is the opposite: **it removes itself.** You
+> learn, and then you don't need it. The next conversation needs no technology at all.
 
 ```bash
 pnpm install && pnpm fetch-models && pnpm dev
@@ -21,6 +32,9 @@ pnpm install && pnpm fetch-models && pnpm dev
 | **Technical complexity** | [Under the hood](#under-the-hood) · [Four problems worth reading about](#four-problems-worth-reading-about) |
 | **Practicality** | [Who this is for](#who-this-is-for) |
 | **Elegance** | [Design, failure modes, robustness](#design-failure-modes-and-robustness) |
+
+Which of the brief's prompts this answers, and the 4-minute spoken version:
+[PITCH.md](PITCH.md).
 
 **A 90-second tour.** Open the home screen and let the status bar go green (the model
 loads locally, ~8 MB). Play **Airport** — three signs, camera scores each one, 80% opens
@@ -40,7 +54,11 @@ What exists falls into three groups:
 | **Quiz apps** | Test *recognition* — "which video means THANK YOU?" | Never test *production*. Recognising a sign and making one are different skills |
 | **Camera-based research systems** (PopSign AI, SignAll) | Genuinely check production with ML — the closest comparable to this | Mobile app or dedicated hardware; installed, account-based, aimed at people already committed to learning |
 
-**Where this one differs:**
+**The difference that matters most:** every one of those teaches people who have already
+decided to learn. None of them touches the *one-way joint* — the fact that the burden of
+bridging each interaction falls on the Deaf person. That's the block this adds material to.
+
+**And in the detail:**
 
 1. **The direction is the point.** Almost all of this software is aimed at people who
    have already decided to learn a sign language. This is aimed at the person on the
